@@ -1,4 +1,4 @@
-const { Thought, User } = require('../models');
+const { Thought, User: Thought } = require('../models');
 
 
 module.exports = {
@@ -24,7 +24,7 @@ module.exports = {
     createThought(req, res) {
         Thought.create(req.body)
             .then((thought) => {
-                return User.findOneAndUpdate(
+                return Thought.findOneAndUpdate(
                     { username: req.body.username },
                     { $addToSet: { thoughts: thought } },
                     { new: true }
@@ -70,6 +70,36 @@ module.exports = {
             .catch((err) => res.status(500).json(err));
     },
     // createReaction
+    createReaction(req, res) {
+        Thought.findOneAndUpdate(
+            { _id: req.params.thoughtId },
+            { $addToSet: { reactions: req.body } },
+            { runValidators: true, new: true }
+        )
+            .then((thought) =>
+                !thought
+                    ? res
+                        .status(404)
+                        .json({ message: 'No thought found with that ID :(' })
+                    : res.json(thought)
+            )
+            .catch((err) => res.status(500).json(err));
+    },
 
     // deleteReaction
+    deleteReaction(req, res) {
+        Thought.findOneAndDelete(
+            { _id: req.params.userUd },
+            { $pull: { reactions: { reactionId: req.params.reactionId } } },
+            { runValidators: true, new: true }
+        )
+            .then((thought) =>
+                !thought
+                    ? res
+                        .status(404)
+                        .json({ message: 'No reaction found with that ID :(' })
+                    : res.json(thought)
+            )
+            .catch((err) => res.status(500).json(err));
+    },
 };

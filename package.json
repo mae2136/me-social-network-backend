@@ -4,7 +4,9 @@
   "description": "Social Network Backend DB built with MongoDB",
   "main": "index.js",
   "scripts": {
-    "test": "N/A"
+    "test": "N/A",
+    "start": "node index",
+    "dev": "nodemon index"
   },
   "repository": {
     "type": "git",
